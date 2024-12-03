@@ -83,4 +83,12 @@ class ProductController extends Controller
     {
         //
     }
+    public function search(Product $product)
+    {
+        
+    }
+
+
+
+
 }
