@@ -11,10 +11,16 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up()//hgdddddddddddddddddddddddddd
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('Product_Name');
+            $table->integer('Product_Quantity');
+            $table->binary('Product_Photo')->nullable();
+            $table->bigInteger('Product_Price');
+           $table->foreignId('Store_id')->constrained()->onDelete('cascade');
+
             $table->timestamps();
         });
     }

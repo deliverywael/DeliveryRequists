@@ -40,6 +40,7 @@ class AuthController extends Controller
             ]
         ]);
     }
+
     public function login(Request $request): JsonResponse
     {
         $request->validate([
@@ -67,6 +68,9 @@ class AuthController extends Controller
         ]);
 
     }
+
+
+
     public function logout(): JsonResponse
     {
         Auth::logout();
@@ -75,6 +79,7 @@ class AuthController extends Controller
             'message' => 'Successfully logged out',
         ]);
     }
+
     public function me(): JsonResponse
     {
         return response()->json([
@@ -82,6 +87,7 @@ class AuthController extends Controller
             'user' => Auth::user(),
         ]);
     }
+
     public function refresh()
     {
         return response()->json([
