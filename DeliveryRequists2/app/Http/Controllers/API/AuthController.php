@@ -17,76 +17,93 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class AuthController extends Controller
 {
     public bool $token = true;
-
-    public function register(Request $request): JsonResponse
+  //Register 
+     public function register(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required | string | max:255',
+
+        $input = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
             'phone_number' => 'required|digits:10|unique:users',
             'password' => 'required|min:6',
         ]);
 
 
-        if ($validator->fails()) {
-
-            return response()->json(['error'=>$validator->errors()], 401);
-
+        if ($input->fails()) {
+            return response()->json(['error' => $input->errors()], 422);    //(Unprocessable Entity)
         }
 
+        $user=User::query()->create([
+            'name' => $request->input('name'),
+            'phone_number' => $request->input('phone_number'),
+            'password' => Hash::make($request->input('password')),
+        ]);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->phone_number = $request->phone_number;
-        $user->password = bcrypt($request->password);
-        $user->save();
-
-        if ($this->token) {
-            return $this->login($request);
-        }
-
+        $token = Auth::login($user);
         return response()->json([
-            'success' => true,
-            'data' => $user
-        ], Response::HTTP_OK);
-    }
+            'status' => 'success',
+            'message' => 'User created successfully',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+            ]
+        ]);}
 
-    public function login(Request $request): JsonResponse
+    
+
+    //Log in
+ public function login(Request $request): JsonResponse
     {
-        $input = $request->only('phone_number', 'password');
-        $jwt_token = null;
+        $validator = Validator::make($request->all(), [
+            'phone_number' => 'required|digits:10',
+            'password' => 'required|min:6',
+        ]);
 
-        if (!$jwt_token = JWTAuth::attempt($input)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid Email or Password',
-            ], Response::HTTP_UNAUTHORIZED);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
+        $credentials = $request->only('phone_number', 'password');
+
+        
+        $token = Auth::attempt($credentials);
+        if (!$token) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid phone number or password',
+            ], 401);
+        }
+        $user = Auth::user();
         return response()->json([
-            'success' => true,
-            'token' => $jwt_token,
-            'user'=> Auth::user(),
+            'status' => 'success',
+            'message' => 'Login successful',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'Bearer',
+            ],
         ]);
     }
 
-    public function logout(Request $request): JsonResponse
+    
+
+    //Log Out 
+    public function logout(): JsonResponse
     {
-
-        try {
-            JWTAuth::invalidate(JWTAuth::parseToken($request->token));
-
+        if (!Auth::check()) {
             return response()->json([
-                'success' => true,
-                'message' => 'User logged out successfully'
-            ]);
-        } catch (JWTException $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, the user cannot be logged out'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'error',
+                'message' => 'You are not logged in',
+            ], 401);
         }
 
+        Auth::logout();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User logged out successfully',
+        ]);
     }
+  
 
     public function getUser(Request $request): JsonResponse
     {
