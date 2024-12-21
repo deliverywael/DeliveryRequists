@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreStoresRequest;
-use App\Http\Requests\UpdateStoresRequest;
+use App\Http\Requests\StoresRequest;
 use App\Models\Stores;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,83 +11,44 @@ use Illuminate\Http\Response;
 
 class StoreController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
+
     public function index()
     {
-        //
+        return response()->json(Stores::with('products')->get(), 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
     public function create()
     {
-        //
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreStoresRequest  $request
-     * @return Response
-     */
-    public function store(StoreStoresRequest $request)
+    public function store(StoresRequest $request)
     {
-        //
+        $store = Stores::create($request->all());
+        return response()->json($store, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Stores  $stores
-     * @return Response
-     */
-    public function show(Stores $stores)
+    public function show($id)
     {
-        //
+        return response()->json(Stores::with('products')->find($id), 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Stores  $stores
-     * @return Response
-     */
-    public function edit(Stores $stores)
+
+
+    public function update(Request $request,$id)
     {
-        //
+        $store = Stores::findOrFail($id);
+        $store->update($request->all());
+        return response()->json($store, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateStoresRequest  $request
-     * @param  \App\Models\Stores  $stores
-     * @return Response
-     */
-    public function update(UpdateStoresRequest $request, Stores $stores)
+    public function destroy($id)
     {
-        //
+        Stores::findOrFail($id)->delete();
+        return response()->json(null, 204);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Stores  $stores
-     * @return Response
-     */
-    public function destroy(Stores $stores)
-    {
-        //
-    }
-
-    public function search(Request $request): JsonResponse {
+    public function search_store(Request $request): JsonResponse {
         $value = $request->input('value');
         $stores = Stores::where('StoreCategory', 'LIKE', $value . '%')->pluck('StoreCategory');
         if ($stores->isEmpty()) {

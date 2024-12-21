@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOrderRequest extends FormRequest
+class FavouriteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,18 +13,13 @@ class UpdateOrderRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true; // السماح بتنفيذ الطلب
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules()
-    {
+    public function rules(): array {
         return [
-            //
+            'User_id' => 'required|exists:users,User_id',
+            'Product_id' => 'required|exists:products,Products_id'
         ];
     }
 }

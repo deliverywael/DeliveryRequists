@@ -1,8 +1,12 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\FavouriteController;
+use App\Http\Controllers\API\OrdersController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\ShoppingCardController;
 use App\Http\Controllers\API\StoreController;
+use App\Http\Controllers\API\StoreUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,3 +48,28 @@ Route::controller(ProductController::class)->group(function () {
     Route::delete('products/{id}', 'delete');
     Route::get('stores/{storeId}/search-products','searchProductsInStore');
 });
+
+
+Route::get('orders', [OrdersController::class, 'index']);
+Route::get('orders/{id}', [OrdersController::class, 'show']);
+Route::post('orders', [OrdersController::class, 'store']);
+Route::put('orders/{id}', [OrdersController::class, 'update']);
+Route::delete('orders/{id}', [OrdersController::class, 'delete']);
+
+
+Route::post('stores/{storeId}/users/{userId}', [StoreUserController::class, 'attachUserToStore']);
+Route::delete('stores/{storeId}/users/{userId}', [StoreUserController::class, 'detachUserFromStore']);
+
+
+
+Route::get('shopping-cards', [ShoppingCardController::class, 'index']);
+Route::get('shopping-cards/{id}', [ShoppingCardController::class, 'show']);
+Route::post('shopping-cards', [ShoppingCardController::class, 'store']);
+Route::put('shopping-cards/{id}', [ShoppingCardController::class, 'update']);
+Route::delete('shopping-cards/{id}', [ShoppingCardController::class, 'delete']);
+
+
+Route::get('favourites', [FavouriteController::class, 'index']);
+Route::get('favourites/{id}', [FavouriteController::class, 'show']);
+Route::post('favourites', [FavouriteController::class, 'store']);
+Route::delete('favourites/{id}', [FavouriteController::class, 'delete']);

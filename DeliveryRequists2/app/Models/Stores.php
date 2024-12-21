@@ -9,10 +9,20 @@ class Stores extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'Store_id'; // تحديد مفتاح الجدول الرئيسي
+    protected $primaryKey = 'Store_id';
     protected $fillable = ['StoreCategory'];
 
+//    public function products() {
+//        return $this->hasMany(Product::class);
+//    }
+
+
+
     public function products() {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class, 'Store_id');
+    }
+
+    public function users() {
+        return $this->belongsToMany(User::class, 'stores_users', 'Store_id', 'User_id');
     }
 }
