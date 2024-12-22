@@ -85,24 +85,19 @@ class AuthController extends Controller
     }
 
     
-
-    //Log Out 
-    public function logout(): JsonResponse
+ //logout
+    public function logout(Request $request): JsonResponse
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not logged in',
-            ], 401);
+          if(!Auth::guard('api')->user()){
+              return response()->json([
+                  'status' => 'error',
+                  'message' => 'you are not logged in'
+              ],401);
+          }
+            Auth::logout();
+            return response()->json(['message' => 'Signed out successfully']);
         }
 
-        Auth::logout();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User logged out successfully',
-        ]);
-    }
   
 
     public function getUser(Request $request): JsonResponse
@@ -115,4 +110,36 @@ class AuthController extends Controller
             return response()->json(['success'=>false,'message'=>'something went wrong']);
         }
     }
+     public function addUserInformation(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'profile_photo' => 'nullable|mimes:jpeg,png,jpg,gif,svg',
+            'location' => 'required|string|max:255',
+        ]);
+
+        $user = Auth::guard('api')->user();                       //current user
+        $image = $request->file('profile_photo');//save photo profile
+        if ($request->hasFile('profile_photo')) {
+            $image =time().'.'.$image->getClientOriginalExtension(); //add time to extension
+            $image->move(public_path('images'), $image);         //path change
+            $image='images/'.$image;
+        }
+        //update user information
+        $user->update([
+            'name' => $data['name'],
+            'last_name' => $data['last_name'],
+            'profile_photo' => $image ?? $user->profile_photo,
+            'location' => $data['location']
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User Information updated successfully',
+        ]);
+
+    }
+
+
 }
