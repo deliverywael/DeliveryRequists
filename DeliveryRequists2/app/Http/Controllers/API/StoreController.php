@@ -14,12 +14,7 @@ class StoreController extends Controller
 
     public function index()
     {
-        return response()->json(Stores::with('products')->get(), 200);
-    }
-
-    public function create()
-    {
-
+        return response()->json(Stores::all(), 200);//::with('products')->get()
     }
 
     public function store(StoresRequest $request)
@@ -30,7 +25,9 @@ class StoreController extends Controller
 
     public function show($id)
     {
-        return response()->json(Stores::with('products')->find($id), 200);
+
+        return response()->json(Stores::find($id), 200);
+
     }
 
 

@@ -13,15 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('product_name');
-            $table->integer('product_quantity');
-            $table->binary('product_photo')->nullable();
-            $table->bigInteger('product_price');
-            $table->foreignId('Store_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
+if(!Schema::hasTable('products')) {
+    Schema::create('products', function (Blueprint $table) {
+        $table->id();
+        $table->string('product_name');
+        $table->integer('product_quantity');
+        $table->binary('product_photo')->nullable();
+        $table->bigInteger('product_price');
+        $table->foreignId('Store_id')->constrained('stores')->onDelete('cascade');
+        $table->timestamps();
+    });
+}
     }
 
     /**

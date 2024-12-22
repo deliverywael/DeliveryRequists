@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::controller(StoreController::class)->group(function () {
-    Route::get('stores',  'index');
+    Route::get('stores','index');
     Route::get('stores/{id}', 'show');
     Route::post('stores', 'store');
     Route::put('stores/{id}', 'update');
@@ -42,7 +42,7 @@ Route::controller(StoreController::class)->group(function () {
 
 Route::controller(ProductController::class)->group(function () {
     Route::get('products', 'index');
-    Route::get('product/{id}', 'show');
+    Route::get('products/{id}', 'show');
     Route::post('products',  'store');
     Route::put('products/{id}',  'update');
     Route::delete('products/{id}', 'delete');
