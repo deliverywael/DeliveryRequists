@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('profile_photo')->nullable();
             $table->string('location')->nullable();
             $table->rememberToken();
-           //$table->timestamps();
+           $table->timestamps();
         });
     }
 
