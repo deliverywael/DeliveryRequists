@@ -110,6 +110,8 @@ class AuthController extends Controller
             return response()->json(['success'=>false,'message'=>'something went wrong']);
         }
     }
+
+    //Add user information (update)
      public function addUserInformation(Request $request): JsonResponse
     {
         $data = $request->validate([
