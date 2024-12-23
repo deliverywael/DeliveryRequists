@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-if(!Schema::hasTable('products')) {
+
     Schema::create('products', function (Blueprint $table) {
         $table->id();
         $table->string('product_name');
@@ -23,7 +23,7 @@ if(!Schema::hasTable('products')) {
         $table->foreignId('Store_id')->constrained('stores')->onDelete('cascade');
         $table->timestamps();
     });
-}
+
     }
 
     /**
